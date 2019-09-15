@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<section>
+			<div style="position: relative" align="center" class="container mt-3">
+				<h2>Hospital Database 675</h2>
+				<p>Choose Hospital, Doctor, or Patient first.</p>  		
+				<p>Type something or leave empty for all results.</p>  				
+				<form action="./search" method="get" novalidate>
+						<input type="text" name="search" placeholder="Search">
+						<select name="filter" required>
+			    <!-- <option value="" selected>Select</option> -->
+                            <option value="hospital">Hospital</option>
+                            <option value="doctor">Doctor</option>
+                            <option value="patient">Patient</option>
+						</select>
+						<button type="submit" class="btn btn-primary">Search</button>
+				</form>
+			</div>
+			<div style="position: relative" align="center">
+				<h5>Sign up for medical care!</h5>
+				<button onclick="window.location.href='/signup'" type="button" class="btn btn-primary">Sign Up</button>
+			</div>
+		</section>
+		
+	</body>
+
+</html>

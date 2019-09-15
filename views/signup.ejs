@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        const submitClick = () => {
+            console.log('Clicked submit!');
+
+            var jsonURL = `http://localhost:3001/maxinsuranceid`;
+            var maxInsuranceID = 0;
+            $.getJSON(jsonURL, function (result) {
+                $.each(result, function (i, field) {
+                    // debugger
+                    maxInsuranceID = field.max_id;
+                    document.getElementById("max_id").value = `${maxInsuranceID + 1}`;
+                    // debugger
+                });
+            });
+
+            maxInsuranceID = maxInsuranceID + 1;
+
+            var doc_name = doctors.options[doctors.options.selectedIndex].value;
+            var j;
+            for (j = doc_name.length - 1; ; j--) {
+                if (doc_name.charAt(j) != ' ') {
+                    //debugger
+                    break
+                }
+            }
+            doc_name = doc_name.substring(0, j + 1);
+            var docjsonURL = `http://localhost:3001/primarydocname/${doc_name}`;
+            // var docjsonURL = `http://localhost:3001/primarydocname/a`;
+            var doc_id = '';
+            // debugger
+
+            $.getJSON(docjsonURL, function (result) {
+                // debugger
+                console.log(result);
+                $.each(result, function (i, field) {
+                    // debugger
+                    doc_id = field.primary_doctor_id;
+
+
+
+                    var name = document.getElementById('name').value;
+                    var dob = document.getElementById('dob').value;
+                    var address = document.getElementById('address').value;
+                    var ssn = document.getElementById('ssn').value;
+                    var phoneNumber = document.getElementById('phone_number').value;
+                    var age = document.getElementById('age').value;
+                    var max_id = document.getElementById('max_id').value;
+                    // debugger
+
+                    postInfo(name, dob, address, ssn, phoneNumber, age, max_id, doc_id)
+                });
+            });
+
+
+            var name = document.getElementById('name').value;
+            var dob = document.getElementById('dob').value;
+            var address = document.getElementById('address').value;
+            var ssn = document.getElementById('ssn').value;
+            var phoneNumber = document.getElementById('phone_number').value;
+            var age = document.getElementById('age').value;
+            // debugger
+            // var postjsonURL = `http://localhost:3001/newpatient/${name}/:dob/:address/:ssn/:phoneNumber/:insuranceid/:primarydoctorid/:age`;
+        }
+
+        const postInfo = (name, dob, address, ssn, phoneNumber, age, max_id, doc_id) => {
+            name = name.replace(/ /, '+');
+            address = address.replace(/ /, '+');
+            address = address.replace(/ /, '+');
+            dob = dob.replace(/\//g, '+');
+            // debugger
+            var postjsonURL = `http://localhost:3001/newpatient/${name}/${dob}/${address}/${ssn}/${phoneNumber}/${max_id}/${doc_id}/${age}`;
+
+            $.getJSON(postjsonURL, function (result) {
+                console.log(result);
+                // debugger
+            });
+
+            document.location.href = './';
+        }
+
+        const hospitalSelect = hospital => {
+            var hospitals = document.getElementById("hospitals");
+            var hospValue = hospitals.options[hospitals.selectedIndex].value;
+
+            var doctors = document.getElementById("doctors");
+            doctors.options.length = 0;
+            var jsonURL = `http://localhost:3001/docsandhosps`;
+            var optionBool = true;
+            $.getJSON(jsonURL, function (result) {
+                $.each(result, function (i, field) {
+                    var currentHosp = field.hname;
+                    var currentDoc = field.dname;
+
+                    if (currentHosp === hospValue) {
+                        doctors.options[doctors.options.length] = new Option(currentDoc, currentDoc, optionBool, false);
+                        optionBool = false;
+                    }
+                });
+            });
+        }
+
+        $(document).ready(function () {
+            var selections = $('#selections');
+
+            var jsonURL = `http://localhost:3001/docsandhosps`;
+            var hospNames = [];
+            var hospDocs = [];
+            var selectString = '<div>Hospitals<div><select id="hospitals" onChange="hospitalSelect()" required>';
+
+            // debugger
+            $.getJSON(jsonURL, function (result) {
+                // debugger
+                $.each(result, function (i, field) {
+                    // debugger
+                    var currentHosp = field.hname; var currentDoc = field.dname;
+
+                    // debugger
+                    if (hospNames.length == 0 || !hospNames.includes(currentHosp)) {
+                        hospNames.push(currentHosp)
+                        selectString += `<option value="${currentHosp}">${currentHosp}</option>`;
+                        hospDocs.push({
+                            hospName: currentHosp,
+                            doctorNames: [],
+                        })
+                    }
+                    var i = 0;
+                    while (hospDocs[i].hospName != currentHosp) {
+                        i++;
+                    }
+                    hospDocs[i].doctorNames.push(field.dname);
+                });
+
+                selectString += '</select></div></div>';
+                selections.append(selectString);
+                selections.append('<div>Doctors<div><select id="doctors" required><option value="select">Select</option></select></div></div>');
+
+                var i = 0;
+                var optionBool = true;
+                hospDocs[0].doctorNames.forEach(element => {
+                    doctors.options[i] = new Option(element, element, optionBool, false);
+                    optionBool = false;
+                    i++;
+                });
+                // debugger
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <section>
+        <div style="position: relative" align="center" class="container mt-3">
+            <h2>Sign Up</h2>
+            <p>Choose a Hospital, Doctor, and then fill in your info.</p>
+
+            <div id="selections">
+
+            </div>
+
+            <!-- <form action="submitClick()" method="get" novalidate> -->
+            <div>Name <div><input type="text" id="name" placeholder="Jon Doe"></div>
+            </div>
+            <div>DOB <div><input type="text" id="dob" placeholder="01/01/1900"></div>
+            </div>
+            <div>Address <div><input type="text" id="address" placeholder="2546 26th Ave"></div>
+            </div>
+            <div>SSN <div><input type="text" maxlength="9" id="ssn" placeholder="123456789"></div>
+            </div>
+            <div>Phone Number <div><input type="text" maxlength="10" id="phone_number" placeholder="8185555555">
+                </div>
+            </div>
+            <div>Age <div><input type="text" id="age" placeholder="100"></div>
+            </div>
+            <div>
+                &nbsp;
+                <div>
+                    <button onclick="submitClick()" type="submit" class="btn btn-primary">Submit</button></div>
+            </div>
+        </div>
+    </section>
+
+    <div style="display:none">
+        <div id="max_id"></div>
+    </div>
+
+</body>
+
+</html>
