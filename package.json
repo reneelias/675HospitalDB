@@ -37,7 +37,7 @@
     "petfinder-client": "^1.0.1",
     "react": "15.x || 16.x || 16.8.6",
     "react-dom": "15.x || 16.x || 16.8.6",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "babel-core": "^6.26.3",
     "babel-loader": "^8.0.5",
     "bootstrap": "^4.3.1",
